@@ -4,6 +4,10 @@
 
 NextShop is a modern e-commerce platform built with Next.js and styled with Tailwind CSS. It provides a responsive and user-friendly shopping experience with product browsing, detailed product views, and company information.
 
+## Demo
+
+https://next-products-eight.vercel.app/
+
 ## Features
 
 - **Responsive Design**: Fully responsive layout that works on mobile, tablet, and desktop devices
