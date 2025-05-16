@@ -1,45 +1,26 @@
 /* eslint-disable @next/next/no-img-element */
-'use client';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
 import Nav from '../components/Nav';
 
-function Page() {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+async function getProducts() {
+  const res = await fetch('https://dummyjson.com/products', { next: { revalidate: 60 } }); // Revalidate every 60 seconds
+  const data = await res.json();
+  return data.products;
+}
 
-  useEffect(() => {
-    async function fetchingProducts() {
-      try {
-        const res = await fetch('https://dummyjson.com/products');
-        const result = await res.json();
-        setProducts(result.products);
-      } catch (error) {
-        console.error('Error fetching products:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchingProducts();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className='flex justify-center items-center min-h-screen bg-gray-50'>
-        <div className='animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-600'></div>
-      </div>
-    );
-  }
+export default async function Page() {
+  const products = await getProducts();
 
   return (
     <div className='min-h-screen bg-gray-50'>
       <Nav />
-      
+
       <div className='container mx-auto px-4 py-12'>
         <h1 className='text-4xl font-bold text-center mb-2 text-gray-800'>Our Products</h1>
-        <p className='text-center text-gray-600 mb-10 max-w-2xl mx-auto'>Discover our curated collection of premium products designed to enhance your lifestyle.</p>
-        
+        <p className='text-center text-gray-600 mb-10 max-w-2xl mx-auto'>
+          Discover our curated collection of premium products designed to enhance your lifestyle.
+        </p>
+
         <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8'>
           {products.map((product) => (
             <div
@@ -106,16 +87,28 @@ function Page() {
 
                 <div className='flex justify-between items-center'>
                   <span
-                    className={`text-sm font-medium px-2.5 py-0.5 rounded-full ${product.stock > 20 ? 'bg-green-100 text-green-800' : product.stock > 0 ? 'bg-orange-100 text-orange-800' : 'bg-red-100 text-red-800'}`}
+                    className={`text-sm font-medium px-2.5 py-0.5 rounded-full ${
+                      product.stock > 20
+                        ? 'bg-green-100 text-green-800'
+                        : product.stock > 0
+                        ? 'bg-orange-100 text-orange-800'
+                        : 'bg-red-100 text-red-800'
+                    }`}
                   >
                     {product.stock > 20 ? 'In Stock' : product.stock > 0 ? 'Low Stock' : 'Out of Stock'}
                   </span>
-                  
+
                   <Link href={`/products/${product.id}`}>
                     <button className='cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-300 flex items-center'>
                       View
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      <svg
+                        xmlns='http://www.w3.org/2000/svg'
+                        className='h-4 w-4 ml-1'
+                        fill='none'
+                        viewBox='0 0 24 24'
+                        stroke='currentColor'
+                      >
+                        <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 5l7 7-7 7' />
                       </svg>
                     </button>
                   </Link>
@@ -128,5 +121,3 @@ function Page() {
     </div>
   );
 }
-
-export default Page;
